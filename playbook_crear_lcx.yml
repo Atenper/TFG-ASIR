@@ -1,0 +1,27 @@
+- name: Crear contenedor LXC
+  hosts: proxmox1
+  become: true
+  tasks:
+
+    - name: Actualizar índice de plantillas LXC
+      command: pveam update
+
+    - name: Verificar si la plantilla ya existe
+      stat:
+        path: /var/lib/vz/template/cache/ubuntu-22.04-standard_22.04-1_amd64.tar.zst
+      register: plantilla_existente
+
+    - name: Descargar plantilla si no existe
+      command: pveam download local ubuntu-22.04-standard_22.04-1_amd64.tar.zst
+      when: not plantilla_existente.stat.exists
+
+    - name: Crear el contenedor LXC con Ubuntu
+      command: >
+        pct create 200 local:vztmpl/ubuntu-22.04-standard_22.04-1_amd64.tar.zst
+        -hostname webapp
+        -storage local-lvm
+        -memory 1024
+        -cores 1
+        -net0 name=eth0,bridge=vmbr0,ip=dhcp
+        -password 13Jiofreed
+        -features nesting=1

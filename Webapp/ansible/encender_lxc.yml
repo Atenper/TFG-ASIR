@@ -1,0 +1,12 @@
+- name: Encender contenedor LXC
+  hosts: proxmox1
+  tasks:
+    - name: Encender contenedor
+      command: "pct start {{ ct_id }}"
+      register: result
+      ignore_errors: yes
+
+    - name: Verificar resultado
+      fail:
+        msg: "Error al encender el contenedor {{ ct_id }}: {{ result.stderr }}"
+      when: result.rc != 0

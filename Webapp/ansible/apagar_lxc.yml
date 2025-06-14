@@ -1,0 +1,20 @@
+- name: Apagar contenedor LXC
+  hosts: proxmox1
+  tasks:
+    - name: Apagar el contenedor
+      shell: "pct stop {{ ct_id }}"
+      register: stop_result
+      ignore_errors: yes
+
+    - name: Inspeccionar salida del comando
+      debug:
+        var: stop_result
+
+    - name: Validar si el contenedor se apagó correctamente
+      fail:
+        msg: "Error al apagar el contenedor {{ ct_id }}: {{ stop_result.stderr }}"
+      when: stop_result.rc != 0
+
+    - name: Confirmar que el contenedor se apagó
+      debug:
+        msg: "Contenedor {{ ct_id }} apagado correctamente."

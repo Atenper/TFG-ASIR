@@ -1,0 +1,14 @@
+---
+- name: Borrar máquina
+  hosts: proxmox1
+  become: yes
+  tasks:
+    - name: Borrar contenedor LXC
+      command: pct destroy {{ ct_id }}
+      register: result
+      ignore_errors: yes
+
+    - name: Verificar si el contenedor fue eliminado
+      fail:
+        msg: "Error al borrar el contenedor {{ ct_id }}: {{ result.stderr }}"
+      when: result.rc != 0

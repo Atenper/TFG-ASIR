@@ -1,0 +1,23 @@
+---
+- name: Obtener IP de máquina o contenedor
+  hosts: proxmox1
+  gather_facts: no
+  tasks:
+    - name: Obtener dirección IP para contenedor
+      shell: "pct exec {{ vmid }} ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"
+      when: vm_type == 'container' or vm_type == 'lxc'
+      register: ip_result
+      ignore_errors: yes
+
+    - name: Inspeccionar salida completa de ip_result
+      debug:
+        var: ip_result
+
+    - name: Validar si se obtuvo la dirección IP
+      fail:
+        msg: "No se pudo obtener la dirección IP para vmid={{ vmid }} y vm_type={{ vm_type }}."
+      when: ip_result.stdout is not defined or ip_result.stdout | trim == ""
+
+    - name: Mostrar dirección IP
+      debug:
+        msg: "{{ ip_result.stdout | trim }}"

@@ -1,0 +1,114 @@
+- hosts: localhost
+  become: yes
+  vars_files:
+    - vars/vars.yml
+
+  tasks:
+    # Configuración de Apache
+    - name: Create document root
+      file:
+        path: "/var/www/{{ vbDomain }}"
+        state: directory
+        owner: "www-data"
+        group: "www-data"
+        mode: '0755'
+      tags: [ apache ]
+
+    - name: Set up Apache VirtualHost
+      template:
+        src: "files/ncApache.conf.j2"
+        dest: "/etc/apache2/sites-available/{{ ncVirtualHostFile }}"
+      tags: [ apache ]
+
+    - name: Enable new site
+      shell: /usr/sbin/a2ensite {{ ncVirtualHostFile }}
+      tags: [ apache ]
+
+    - name: Creates database for Nextcloud
+      mysql_db:
+        name: "nextcloud"
+        state: present
+        login_user: root
+        login_password: "{{ mysql_root }}"
+      tags: [ mysql ]
+
+    - name: Create MySQL user for Nextcloud
+      mysql_user:
+        name: "{{ nextcloud_db_user }}"
+        password: "{{ nextcloud_db_pass }}"
+        priv: "nextcloud.*:ALL"
+        state: present
+        login_user: root
+        login_password: "{{ mysql_root }}"
+      tags: [ mysql ]
+
+    # NextCloud Configuration
+    - name: Download and unpack latest NextCloud
+      unarchive:
+        src: https://download.nextcloud.com/server/releases/latest.tar.bz2
+        dest: "/var/www/{{ vbDomain }}"
+        remote_src: yes
+        creates: "/var/www/{{ vbDomain }}/nextcloud"
+      tags: [ nextcloud ]
+
+    - name: Set ownership
+      file:
+        path: "/var/www/{{ vbDomain }}"
+        state: directory
+        recurse: yes
+        owner: www-data
+        group: www-data
+      tags: [ nextcloud ]
+
+    - name: Set permissions for directories
+      shell: "/usr/bin/find /var/www/{{ http_host }}/nextcloud/ -type d -exec chmod 750 {} \\;"
+      tags: [ nextcloud ]
+
+    - name: Set permissions for files
+      shell: "/usr/bin/find /var/www/{{ http_host }}/nextcloud/ -type f -exec chmod 640 {} \\;"
+      tags: [ nextcloud ]
+    
+
+    - name: Configurar permisos de /var/www/nextcloud
+      file:
+        path: /var/www/web/nextcloud
+        state: directory
+        owner: vsftpd
+        group: nogroup
+        mode: '0755'
+        recurse: yes
+
+    - name: Configurar usuario NextCloud
+      blockinfile:
+        path: /etc/vsftpd/userconfig/{{ftpuser}}
+        create: yes
+        block: |
+          local_root=/var/www/{{ vbDomain }}/nextcloud
+
+    - name: Crear contraseña de usuario NextCloud
+      shell: >
+        htpasswd -p -b /etc/vsftpd/ftpd.passwd {{ftp_user}}
+        $(bcrypt-tool hash {{ ftp_pass }})
+    - name: Set ownership
+      file:
+        path: "/var/www/{{ vbDomain }}"
+        state: directory
+        recurse: yes
+        owner: www-data
+        group: www-data
+    #Reiniciar
+    - name: Habilitar y reiniciar vsftpd
+      service:
+        name: vsftpd
+        enabled: yes
+
+    - name: Restart MySQL to apply changes
+      service:
+        name: mariadb
+        state: restarted
+
+
+    - name: Restart Apache to apply changes
+      service:
+        name: apache2
+        state: restarted

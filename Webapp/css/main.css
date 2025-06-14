@@ -1,0 +1,240 @@
+body {
+
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background: #f8f9fa;
+  }
+
+  /* Panel Izquierdo con imagen de fondo */
+  .letrah1 {
+    color: #e4e4e4
+  }
+
+  .bg-panel {
+    background-color: #212529a8;
+    box-shadow: 0px 10px 10px 5px #212529;
+  }
+
+  .bg-fondo {
+    background: url(../img/bg.webp);
+    background-size: cover;
+  }
+
+  .left-side {
+
+    background-size: cover;
+    color: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    /* Alineado hacia arriba */
+    text-align: center;
+    padding: 2rem;
+    padding-top: 4rem;
+    /* Más espacio arriba */
+  }
+
+  .left-side img {
+    width: auto;
+    margin-bottom: 1rem;
+  }
+
+  .left-side h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .left-side p {
+    font-size: 1.1rem;
+    max-width: 350px;
+    margin: 0 auto;
+  }
+
+  /* Alertas personalizadas en el panel izquierdo */
+  .custom-alert-success {
+    background-color: #3595bb !important;
+    border-color: #5dc4ec !important;
+    color: #fff;
+  }
+
+  .custom-alert-error {
+    background-color: rgba(220, 53, 69, 0.7) !important;
+    border-color: rgba(220, 53, 69, 0.8) !important;
+    color: #fff;
+  }
+
+  .custom-alert-alert {
+    background-color: rgba(255, 193, 7, 0.7) !important;
+    border-color: rgba(255, 193, 7, 0.8) !important;
+    color: #212529;
+  }
+
+  /* Panel Derecho */
+  .right-side {
+    /*background: #f8f9fa;  Gris claro */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .custom-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  .bg-h1 {
+    background-color: #ffffff;
+    color: #5dc4ec;
+  }
+
+  /* Pestañas: usamos los colores primary de Bootstrap */
+  .nav-tabs .nav-link.active {
+    background-color: var(--bs-primary);
+    color: #fff;
+  }
+
+  .nav-tabs .nav-link {
+    color: var(--bs-primary);
+  }
+
+  .left-side p {
+    color: #000;
+    /* Asegura que el texto sea oscuro */
+    background: #3595bb;
+    /* Fondo semitransparente */
+    padding: 10px;
+    /* Añade espacio interno */
+    border-radius: 5px;
+    /* Bordes redondeados */
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+    /* Sombras suaves */
+    display: inline-block;
+    /* Ajusta el fondo al contenido */
+  }
+  .btn-primary {
+    background: #3595bb;
+    border-color: #5dc4ec;
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus,
+  .btn-primary:active,
+  .btn-primary.active,
+  .open>.dropdown-toggle.btn-primary {
+    color: #fff;
+    background-color: #5dc4ec !important;
+    border-color: #5dc4ec;
+    /*set the color you want here*/
+  }
+
+  .colornar {
+    color: #3595bb;
+
+}
+
+.buscar {
+    background-color: rgb(19, 230, 230);
+}
+
+.btn-secondary:hover {
+    background-color: #af3030;
+    border-color: #af3030;
+}
+
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1050;
+    /* Asegura que esté por encima de otros elementos */
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    background-color: #5dc4ec;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.floating-button:hover {
+    background-color: #3595bb;
+}
+
+.dropdown-menu {
+    position: absolute;
+    /* Asegura que el menú no afecte el flujo del documento */
+    transform: translate(-50%, +50px);
+    /* Ajusta la posición del menú */
+    min-width: 300px;
+    /* Ajusta el ancho del menú desplegable */
+    z-index: 1051;
+    /* Asegura que esté por encima del contenido */
+}
+
+  .custom-alert-success {
+    background-color: rgba(0, 123, 255, 0.8) !important;
+    border-color: rgba(0, 123, 255, 0.8) !important;
+    color: #fff;
+  }
+
+.custom-alert-error {
+  background-color: rgba(220, 53, 69, 0.8) !important;
+  border-color: rgba(220, 53, 69, 0.8) !important;
+  color: #fff;
+}
+
+.custom-alert-alert {
+  background-color: rgba(255, 193, 7, 0.8) !important;
+  border-color: rgba(255, 193, 7, 0.8) !important;
+  color: #fff;
+}
+
+.custom-alert-app {
+  background-color: rgba(51, 102, 153, 0.8) !important;
+  border-color: rgba(165, 165, 165, 0.8) !important;
+  color: #fff;
+}
+
+/* Contenedor principal: ocupa el alto descontando la navbar (56px) */
+.full-height {
+  min-height: calc(100vh - 56px);
+}
+.vista {
+  display: none;
+}
+.vista.activa {
+  display: block;
+}
+.suggestions-box {
+  display: none;
+  position: absolute;
+  width: 100%;
+  background: white;
+  border: 1px solid #ccc;
+  border-top: none;
+  max-height: 200px;
+  overflow-y: auto;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.suggestion {
+  padding: 10px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.suggestion:hover {
+  background-color: #f0f0f0;
+}
+

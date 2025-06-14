@@ -1,0 +1,35 @@
+---
+- name: Crear contenedor LXC
+  hosts: proxmox1
+  become: true
+  vars:
+    storage: "{{ ct_storage | default('local-lvm') }}"
+    net_bridge: "{{ ct_net_bridge | default('vmbr0') }}"
+
+  tasks:
+    - name: Actualizar índice de plantillas LXC
+      command: pveam update
+
+    - name: Verificar si la plantilla ya existe
+      stat:
+        path: "/var/lib/vz/template/cache/{{ ct_template }}"
+      register: plantilla_existente
+
+    - name: Descargar plantilla si no existe
+      command: "pveam download local {{ ct_template }}"
+      when: not plantilla_existente.stat.exists
+
+    - name: Crear el contenedor LXC con Ubuntu
+      command: >
+        pct create {{ ct_id }} local:vztmpl/{{ ct_template }}
+        -hostname {{ ct_hostname }}
+        -storage {{ storage }}
+        -memory {{ ct_memory | default(1024) }}
+        -cores {{ ct_cores | default(1) }}
+        -net0 name=eth0,bridge={{ net_bridge }},ip=dhcp
+        -password {{ ct_password }}
+        -features nesting=1
+      register: resultado_creacion
+
+    - debug:
+        var: resultado_creacion.stdout

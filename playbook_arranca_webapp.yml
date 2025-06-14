@@ -1,0 +1,30 @@
+- name: Arranca LXC
+  hosts: proxmox1
+  become: true
+  tasks:
+    - name: Iniciar el contenedor
+      ansible.builtin.shell: pct start 200
+
+    - name: Actualizar lista de paquetes en contenedor
+      ansible.builtin.command: pct exec 200 -- apt update
+
+    - name: Instalar openssh-server en contenedor
+      ansible.builtin.command: pct exec 200 -- apt install -y openssh-server
+
+    - name: Habilitar servicio ssh para que arranque automáticamente
+      ansible.builtin.command: pct exec 200 -- systemctl enable ssh
+
+    - name: Iniciar servicio ssh
+      ansible.builtin.command: pct exec 200 -- systemctl start ssh
+
+    - name: Permitir inicio de sesión root por SSH
+      ansible.builtin.command: >
+        pct exec 200 -- bash -c "sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config"
+
+    - name: Permitir autenticación por contraseña SSH
+      ansible.builtin.command: >
+        pct exec 200 -- bash -c "sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config"
+
+    - name: Reiniciar SSH para aplicar configuración
+      ansible.builtin.command: pct exec 200 -- systemctl restart ssh
+
