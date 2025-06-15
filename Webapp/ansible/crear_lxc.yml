@@ -5,6 +5,7 @@
   vars:
     storage: "{{ ct_storage | default('local-lvm') }}"
     net_bridge: "{{ ct_net_bridge | default('vmbr0') }}"
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
   tasks:
     - name: Actualizar índice de plantillas LXC

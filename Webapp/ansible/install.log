@@ -1,0 +1,455 @@
+[2025-06-15 00:57:03] Iniciando instalación
+Datos recibidos: Array
+(
+    [ct_id] => 201
+    [app_type] => wordpress
+)
+
+Ejecutando: ansible-playbook -i ../ansible/inventario.ini '../ansible/wordpress.yml' --extra-vars "ct_id='201'" 2>&1
+Resultado (0): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Test container connectivity] *********************************************
+ok: [proxmox1]
+
+TASK [Fail if container unreachable] *******************************************
+skipping: [proxmox1]
+
+TASK [Update package index] ****************************************************
+changed: [proxmox1]
+
+TASK [Install required packages] ***********************************************
+changed: [proxmox1]
+
+TASK [Create document root] ****************************************************
+changed: [proxmox1]
+
+TASK [Configure Apache virtual host] *******************************************
+changed: [proxmox1]
+
+TASK [Enable WordPress site] ***************************************************
+changed: [proxmox1]
+
+TASK [Enable rewrite module] ***************************************************
+changed: [proxmox1]
+
+TASK [Create WordPress database] ***********************************************
+changed: [proxmox1]
+
+TASK [Create database user] ****************************************************
+changed: [proxmox1]
+
+TASK [Download WordPress] ******************************************************
+changed: [proxmox1]
+
+TASK [Extract WordPress] *******************************************************
+changed: [proxmox1]
+
+TASK [Set permissions] *********************************************************
+changed: [proxmox1]
+
+TASK [Configure wp-config] *****************************************************
+changed: [proxmox1]
+
+TASK [Restart Apache] **********************************************************
+changed: [proxmox1]
+
+TASK [Restart MySQL] ***********************************************************
+changed: [proxmox1]
+
+TASK [Show installation info] **************************************************
+ok: [proxmox1] => {
+    "msg": "WordPress successfully installed in CT 201\nAccess URL: http://wp.domain\nDatabase: wordpress\nDB User: wp_user"
+}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=17   changed=14   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+[2025-06-15 01:03:41] Iniciando instalación
+Datos recibidos: Array
+(
+    [ct_id] => 201
+    [app_type] => wordpress
+)
+
+Ejecutando: ansible-playbook -i ../ansible/inventario.ini '../ansible/wordpress.yml' --extra-vars "ct_id='201'" 2>&1
+Resultado (2): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Test container connectivity] *********************************************
+ok: [proxmox1]
+
+TASK [Fail if container unreachable] *******************************************
+skipping: [proxmox1]
+
+TASK [Update package index] ****************************************************
+changed: [proxmox1]
+
+TASK [Install required packages] ***********************************************
+changed: [proxmox1]
+
+TASK [Create document root] ****************************************************
+changed: [proxmox1]
+
+TASK [Configure Apache virtual host] *******************************************
+changed: [proxmox1]
+
+TASK [Enable WordPress site] ***************************************************
+changed: [proxmox1]
+
+TASK [Enable rewrite module] ***************************************************
+changed: [proxmox1]
+
+TASK [Create WordPress database] ***********************************************
+fatal: [proxmox1]: FAILED! => {"changed": true, "cmd": ["pct", "exec", "201", "--", "mysql", "-u", "root", "-e", "CREATE DATABASE wordpress;"], "delta": "0:00:00.798322", "end": "2025-06-15 03:03:53.593661", "msg": "non-zero return code", "rc": 1, "start": "2025-06-15 03:03:52.795339", "stderr": "ERROR 1007 (HY000) at line 1: Can't create database 'wordpress'; database exists", "stderr_lines": ["ERROR 1007 (HY000) at line 1: Can't create database 'wordpress'; database exists"], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=8    changed=6    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0
+
+[2025-06-15 01:05:45] Iniciando instalación
+Datos recibidos: Array
+(
+    [ct_id] => 201
+    [app_type] => wordpress
+)
+
+Ejecutando: ansible-playbook -i ../ansible/inventario.ini '../ansible/wordpress.yml' --extra-vars "ct_id='201'" 2>&1
+Resultado (2): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Test container connectivity] *********************************************
+ok: [proxmox1]
+
+TASK [Fail if container unreachable] *******************************************
+skipping: [proxmox1]
+
+TASK [Update package index] ****************************************************
+changed: [proxmox1]
+
+TASK [Install required packages] ***********************************************
+changed: [proxmox1]
+
+TASK [Create document root] ****************************************************
+changed: [proxmox1]
+
+TASK [Configure Apache virtual host] *******************************************
+changed: [proxmox1]
+
+TASK [Enable WordPress site] ***************************************************
+changed: [proxmox1]
+
+TASK [Enable rewrite module] ***************************************************
+changed: [proxmox1]
+
+TASK [Create WordPress database] ***********************************************
+changed: [proxmox1]
+
+TASK [Create database user] ****************************************************
+fatal: [proxmox1]: FAILED! => {"changed": true, "cmd": ["pct", "exec", "201", "--", "mysql", "-u", "root", "-e", "\nCREATE USER 'wp_user'@'localhost' IDENTIFIED BY 'wp_user';\nGRANT ALL PRIVILEGES ON wordpress.* TO 'wp_user'@'localhost';\nFLUSH PRIVILEGES;"], "delta": "0:00:00.774225", "end": "2025-06-15 03:05:58.839164", "msg": "non-zero return code", "rc": 1, "start": "2025-06-15 03:05:58.064939", "stderr": "ERROR 1396 (HY000) at line 2: Operation CREATE USER failed for 'wp_user'@'localhost'", "stderr_lines": ["ERROR 1396 (HY000) at line 2: Operation CREATE USER failed for 'wp_user'@'localhost'"], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=9    changed=7    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0
+
+Resultado (2): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Create document root in container] ***************************************
+changed: [proxmox1]
+
+TASK [Set up Apache VirtualHost in container] **********************************
+fatal: [proxmox1]: FAILED! => {"changed": true, "cmd": ["pct", "exec", "201", "--", "bash", "-c", "cat > /etc/apache2/sites-available/wordpress.conf", "<<", "EOF", "<VirtualHost", "127.0.0.1:8080>", "ServerAdmin", "webmaster@localhost", "ServerName", "wp.domain", "ServerAlias", "www.wp.domain", "DocumentRoot", "/var/www/web/wordpress", "ErrorLog", "${APACHE_LOG_DIR}/error.log", "CustomLog", "${APACHE_LOG_DIR}/access.log", "combined", "<Directory", "/var/www/web>", "Options", "-Indexes", "AllowOverride", "All", "</Directory>", "<IfModule", "mod_dir.c>", "DirectoryIndex", "index.php", "index.html", "index.cgi", "index.pl", "index.xhtml", "index.htm", "</IfModule>", "</VirtualHost>", "EOF"], "delta": "0:13:58.067019", "end": "2025-06-15 03:06:37.549885", "failed_when_result": true, "msg": "non-zero return code", "rc": 137, "start": "2025-06-15 02:52:39.482866", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=2    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0
+
+Resultado (2): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Create document root in container] ***************************************
+changed: [proxmox1]
+
+TASK [Set up Apache VirtualHost in container] **********************************
+fatal: [proxmox1]: FAILED! => {"changed": true, "cmd": ["pct", "exec", "201", "--", "bash", "-c", "cat > /etc/apache2/sites-available/wordpress.conf", "<<", "EOF", "<VirtualHost", "127.0.0.1:8080>", "ServerAdmin", "webmaster@localhost", "ServerName", "wp.domain", "ServerAlias", "www.wp.domain", "DocumentRoot", "/var/www/web/wordpress", "ErrorLog", "${APACHE_LOG_DIR}/error.log", "CustomLog", "${APACHE_LOG_DIR}/access.log", "combined", "<Directory", "/var/www/web>", "Options", "-Indexes", "AllowOverride", "All", "</Directory>", "<IfModule", "mod_dir.c>", "DirectoryIndex", "index.php", "index.html", "index.cgi", "index.pl", "index.xhtml", "index.htm", "</IfModule>", "</VirtualHost>", "EOF"], "delta": "0:15:59.220272", "end": "2025-06-15 03:06:37.550795", "failed_when_result": true, "msg": "non-zero return code", "rc": 137, "start": "2025-06-15 02:50:38.330523", "stderr": "", "stderr_lines": [], "stdout": "", "stdout_lines": []}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=2    changed=1    unreachable=0    failed=1    skipped=0    rescued=0    ignored=0
+
+[2025-06-15 01:07:28] Iniciando instalación
+Datos recibidos: Array
+(
+    [ct_id] => 202
+    [app_type] => wordpress
+)
+
+Ejecutando: ansible-playbook -i ../ansible/inventario.ini '../ansible/wordpress.yml' --extra-vars "ct_id='202'" 2>&1
+Resultado (2): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Test container connectivity] *********************************************
+fatal: [proxmox1]: FAILED! => {"changed": false, "cmd": ["pct", "exec", "201", "--", "echo", "Connection successful"], "delta": "0:00:00.772647", "end": "2025-06-15 03:07:31.538832", "msg": "non-zero return code", "rc": 2, "start": "2025-06-15 03:07:30.766185", "stderr": "Configuration file 'nodes/atenper/lxc/201.conf' does not exist", "stderr_lines": ["Configuration file 'nodes/atenper/lxc/201.conf' does not exist"], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [Fail if container unreachable] *******************************************
+fatal: [proxmox1]: FAILED! => {"changed": false, "msg": "Cannot connect to LXC container 201"}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=2    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=1
+
+[2025-06-15 01:08:40] Iniciando instalación
+Datos recibidos: Array
+(
+    [ct_id] => 202
+    [app_type] => wordpress
+)
+
+Ejecutando: ansible-playbook -i ../ansible/inventario.ini '../ansible/wordpress.yml' --extra-vars "ct_id='202'" 2>&1
+Resultado (2): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Test container connectivity] *********************************************
+fatal: [proxmox1]: FAILED! => {"changed": false, "cmd": ["pct", "exec", "201", "--", "echo", "Connection successful"], "delta": "0:00:00.746773", "end": "2025-06-15 03:08:43.177993", "msg": "non-zero return code", "rc": 2, "start": "2025-06-15 03:08:42.431220", "stderr": "Configuration file 'nodes/atenper/lxc/201.conf' does not exist", "stderr_lines": ["Configuration file 'nodes/atenper/lxc/201.conf' does not exist"], "stdout": "", "stdout_lines": []}
+...ignoring
+
+TASK [Fail if container unreachable] *******************************************
+fatal: [proxmox1]: FAILED! => {"changed": false, "msg": "Cannot connect to LXC container 201"}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=2    changed=0    unreachable=0    failed=1    skipped=0    rescued=0    ignored=1
+
+[2025-06-15 01:11:09] Iniciando instalación
+Datos recibidos: Array
+(
+    [ct_id] => 202
+    [app_type] => wordpress
+)
+
+Ejecutando: ansible-playbook -i ../ansible/inventario.ini '../ansible/wordpress.yml' --extra-vars "ct_id='202'" 2>&1
+Resultado (0): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Test container connectivity] *********************************************
+ok: [proxmox1]
+
+TASK [Fail if container unreachable] *******************************************
+skipping: [proxmox1]
+
+TASK [Update package index] ****************************************************
+changed: [proxmox1]
+
+TASK [Install required packages] ***********************************************
+changed: [proxmox1]
+
+TASK [Create document root] ****************************************************
+changed: [proxmox1]
+
+TASK [Configure Apache virtual host] *******************************************
+changed: [proxmox1]
+
+TASK [Enable WordPress site] ***************************************************
+changed: [proxmox1]
+
+TASK [Enable rewrite module] ***************************************************
+changed: [proxmox1]
+
+TASK [Create WordPress database] ***********************************************
+changed: [proxmox1]
+
+TASK [Create database user] ****************************************************
+changed: [proxmox1]
+
+TASK [Download WordPress] ******************************************************
+changed: [proxmox1]
+
+TASK [Extract WordPress] *******************************************************
+changed: [proxmox1]
+
+TASK [Set permissions] *********************************************************
+changed: [proxmox1]
+
+TASK [Configure wp-config] *****************************************************
+changed: [proxmox1]
+
+TASK [Restart Apache] **********************************************************
+changed: [proxmox1]
+
+TASK [Restart MySQL] ***********************************************************
+changed: [proxmox1]
+
+TASK [Show installation info] **************************************************
+ok: [proxmox1] => {
+    "msg": "WordPress successfully installed in CT 202\nAccess URL: http://wp.domain\nDatabase: wordpress\nDB User: wp_user"
+}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=17   changed=14   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+
+[2025-06-15 01:27:45] Iniciando instalación
+Datos recibidos: Array
+(
+    [ct_id] => 201
+    [app_type] => wordpress
+)
+
+Ejecutando: ansible-playbook -i ../ansible/inventario.ini '../ansible/wordpress.yml' --extra-vars "ct_id='201'" 2>&1
+Resultado (2): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Test container connectivity] *********************************************
+ok: [proxmox1]
+
+TASK [Fail if container unreachable] *******************************************
+skipping: [proxmox1]
+
+TASK [Update package index] ****************************************************
+fatal: [proxmox1]: FAILED! => {"changed": true, "cmd": ["pct", "exec", "201", "--", "apt-get", "update"], "delta": "0:00:01.513640", "end": "2025-06-15 03:27:50.442556", "msg": "non-zero return code", "rc": 100, "start": "2025-06-15 03:27:48.928916", "stderr": "E: Could not get lock /var/lib/apt/lists/lock. It is held by process 108 (apt)\nE: Unable to lock directory /var/lib/apt/lists/", "stderr_lines": ["E: Could not get lock /var/lib/apt/lists/lock. It is held by process 108 (apt)", "E: Unable to lock directory /var/lib/apt/lists/"], "stdout": "Reading package lists...", "stdout_lines": ["Reading package lists..."]}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=2    changed=0    unreachable=0    failed=1    skipped=1    rescued=0    ignored=0
+
+[2025-06-15 01:28:22] Iniciando instalación
+Datos recibidos: Array
+(
+    [ct_id] => 201
+    [app_type] => wordpress
+)
+
+Ejecutando: ansible-playbook -i ../ansible/inventario.ini '../ansible/wordpress.yml' --extra-vars "ct_id='201'" 2>&1
+Resultado (0): 
+PLAY [proxmox1] ****************************************************************
+
+TASK [Gathering Facts] *********************************************************
+[WARNING]: Platform linux on host proxmox1 is using the discovered Python
+interpreter at /usr/bin/python3.11, but future installation of another Python
+interpreter could change the meaning of that path. See
+https://docs.ansible.com/ansible-
+core/2.17/reference_appendices/interpreter_discovery.html for more information.
+ok: [proxmox1]
+
+TASK [Test container connectivity] *********************************************
+ok: [proxmox1]
+
+TASK [Fail if container unreachable] *******************************************
+skipping: [proxmox1]
+
+TASK [Update package index] ****************************************************
+changed: [proxmox1]
+
+TASK [Install required packages] ***********************************************
+changed: [proxmox1]
+
+TASK [Create document root] ****************************************************
+changed: [proxmox1]
+
+TASK [Configure Apache virtual host] *******************************************
+changed: [proxmox1]
+
+TASK [Enable WordPress site] ***************************************************
+changed: [proxmox1]
+
+TASK [Enable rewrite module] ***************************************************
+changed: [proxmox1]
+
+TASK [Create WordPress database] ***********************************************
+changed: [proxmox1]
+
+TASK [Create database user] ****************************************************
+changed: [proxmox1]
+
+TASK [Download WordPress] ******************************************************
+changed: [proxmox1]
+
+TASK [Extract WordPress] *******************************************************
+changed: [proxmox1]
+
+TASK [Set permissions] *********************************************************
+changed: [proxmox1]
+
+TASK [Configure wp-config] *****************************************************
+changed: [proxmox1]
+
+TASK [Restart Apache] **********************************************************
+changed: [proxmox1]
+
+TASK [Restart MySQL] ***********************************************************
+changed: [proxmox1]
+
+TASK [Show installation info] **************************************************
+ok: [proxmox1] => {
+    "msg": "WordPress successfully installed in CT 201\nAccess URL: http://wp.domain\nDatabase: wordpress\nDB User: wp_user"
+}
+
+PLAY RECAP *********************************************************************
+proxmox1                   : ok=17   changed=14   unreachable=0    failed=0    skipped=1    rescued=0    ignored=0
+

@@ -1,115 +1,101 @@
 ---
-- hosts: localhost
+- hosts: proxmox1
   become: yes
   vars_files:
     - vars/vars.yml
 
   tasks:
-    # Configuración de Apache
+    # Verify container connection
+    - name: Test container connectivity
+      command: "pct exec {{ ct_id }} -- echo 'Connection successful'"
+      register: connection_test
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Fail if container unreachable
+      fail:
+        msg: "Cannot connect to LXC container {{ ct_id }}"
+      when: connection_test.rc != 0
+
+    # Install prerequisites in container
+    - name: Update package index
+      command: "pct exec {{ ct_id }} -- apt-get update"
+      register: apt_update
+      changed_when: "'up to date' not in apt_update.stdout"
+
+    - name: Install required packages
+      command: "pct exec {{ ct_id }} -- apt-get install -y apache2 mysql-server php libapache2-mod-php php-mysql"
+      register: install_packages
+      retries: 3
+      delay: 10
+      until: install_packages.rc == 0
+
+    # Configure Apache in container
     - name: Create document root
-      file:
-        path: "/var/www/{{ vbDomain }}"
-        state: directory
-        owner: "www-data"
-        group: "www-data"
-        mode: '0755'
-      tags: [ apache ]
-
-    - name: Set up Apache VirtualHost
-      template:
-        src: "files/wpApache.conf.j2"
-        dest: "/etc/apache2/sites-available/{{ wpVirtualHostFile }}"
-      tags: [ apache ]
-
-    - name: Enable new site
-      shell: /usr/sbin/a2ensite {{ wpVirtualHostFile }}
-      tags: [ apache ]
-
-    #Mariadb configuration for wordpress
-    - name: Creates database for WordPress
-      mysql_db:
-        name: "wordpress"
-        state: present
-        login_user: root
-        login_password: "{{ mysql_root }}"
-      tags: [ mysql ]
-
-    - name: Create MySQL user for WordPress
-      mysql_user:
-        name: "{{ wordpress_db_user }}"
-        password: "{{ wordpress_db_pass }}"
-        priv: "wordpress.*:ALL"
-        state: present
-        login_user: root
-        login_password: "{{ mysql_root }}"
-      tags: [ mysql ]
-
-    # Configuración de WordPress
-    - name: Download and unpack latest WordPress
-      unarchive:
-        src: https://wordpress.org/latest.tar.gz
-        dest: "/var/www/{{ vbDomain }}"
-        remote_src: yes
-        creates: "/var/www/{{ vbDomain }}/wordpress"
-      tags: [ wordpress ]
-
-    - name: Set ownership
-      file:
-        path: "/var/www/{{ vbDomain }}"
-        state: directory
-        recurse: yes
-        owner: www-data
-        group: www-data
-      tags: [ wordpress ]
-
-    - name: Set permissions for directories
-      shell: '/usr/bin/find /var/www/{{ vbDomain }}/wordpress/ -type d -exec chmod 750 {} \;'
-      tags: [ wordpress ]
-
-    - name: Set permissions for files
-      shell: '/usr/bin/find /var/www/{{ vbDomain }}/wordpress/ -type f -exec chmod 640 {} \;'
-      tags: [ wordpress ]
-
-    - name: Set up wp-config
-      template:
-        src: "files/wpConfig.php.j2"
-        dest: "/var/www/{{ vbDomain }}/wordpress/wp-config.php"
-      tags: [ wordpress ]
-
-    - name: Configurar permisos de /var/www/wp
-      file:
-        path: /var/www/web/wordpress
-        state: directory
-        owner: vsftpd
-        group: nogroup
-        mode: '0755'
-        recurse: yes
+      command: "pct exec {{ ct_id }} -- mkdir -p /var/www/wordpress && chown www-data:www-data /var/www/wordpress"
     
-    - name: Configurar usuario WordPress
-      blockinfile:
-        path: /etc/vsftpd/userconfig/{{ftp_user}}
-        create: yes
-        block: |
-          local_root=/var/www/web/wordpress
+    - name: Configure Apache virtual host
+      command: |
+        pct exec {{ ct_id }} -- bash -c 'cat > /etc/apache2/sites-available/wordpress.conf << "EOF"
+        <VirtualHost *:80>
+            ServerName {{ wordpress_domain }}
+            DocumentRoot /var/www/wordpress
+            <Directory /var/www/wordpress>
+                AllowOverride All
+                Require all granted
+            </Directory>
+        </VirtualHost>
+        EOF'
     
-    - name: Crear contraseña de usuario WordPress
-      shell: >
-        htpasswd -p -b /etc/vsftpd/ftpd.passwd {{ftp_user}}
-        $(bcrypt-tool hash {{ ftp_pass }})
+    - name: Enable WordPress site
+      command: "pct exec {{ ct_id }} -- a2ensite wordpress.conf"
     
-    # Reiniciar MySQL para aplicar cambios
-    - name: Habilitar y reiniciar vsftpd
-      service:
-        name: vsftpd
-        enabled: yes
-    - name: Restart MySQL to apply changes
-      service:
-        name: mariadb
-        state: restarted
-      tags: [ mysql ]
+    - name: Enable rewrite module
+      command: "pct exec {{ ct_id }} -- a2enmod rewrite"
 
-    - name: Restart Apache to apply changes
-      service:
-        name: apache2
-        state: restarted
-      tags: [ apache ]
+    # Configure MySQL in container
+    - name: Create WordPress database
+      command: "pct exec {{ ct_id }} -- mysql -u root -e 'CREATE DATABASE wordpress;'"
+    
+    - name: Create database user
+      command: |
+        pct exec {{ ct_id }} -- mysql -u root -e "
+        CREATE USER '{{ wordpress_db_user }}'@'localhost' IDENTIFIED BY '{{ wordpress_db_pass }}';
+        GRANT ALL PRIVILEGES ON wordpress.* TO '{{ wordpress_db_user }}'@'localhost';
+        FLUSH PRIVILEGES;"
+
+    # Install WordPress in container
+    - name: Download WordPress
+      command: "pct exec {{ ct_id }} -- wget -O /tmp/wordpress.tar.gz https://wordpress.org/latest.tar.gz"
+    
+    - name: Extract WordPress
+      command: "pct exec {{ ct_id }} -- tar -xzf /tmp/wordpress.tar.gz -C /var/www/wordpress --strip-components=1"
+    
+    - name: Set permissions
+      command: "pct exec {{ ct_id }} -- chown -R www-data:www-data /var/www/wordpress"
+    
+    - name: Configure wp-config
+      command: |
+        pct exec {{ ct_id }} -- bash -c 'cat > /var/www/wordpress/wp-config.php << "EOF"
+        <?php
+        define('DB_NAME', 'wordpress');
+        define('DB_USER', '{{ wordpress_db_user }}');
+        define('DB_PASSWORD', '{{ wordpress_db_pass }}');
+        define('DB_HOST', 'localhost');
+        // Additional WordPress configuration
+        EOF'
+    
+    # Final configuration
+    - name: Restart Apache
+      command: "pct exec {{ ct_id }} -- systemctl restart apache2"
+    
+    - name: Restart MySQL
+      command: "pct exec {{ ct_id }} -- systemctl restart mysql"
+
+    - name: Show installation info
+      debug:
+        msg: |
+          WordPress successfully installed in CT {{ ct_id }}
+          Access URL: http://{{ wordpress_domain }}
+          Database: wordpress
+          DB User: {{ wordpress_db_user }}

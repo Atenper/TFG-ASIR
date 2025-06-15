@@ -1,7 +1,8 @@
 ---
 - name: Obtener IP de máquina o contenedor
   hosts: proxmox1
-  gather_facts: no
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
   tasks:
     - name: Obtener dirección IP para contenedor
       shell: "pct exec {{ vmid }} ip addr show eth0 | grep 'inet ' | awk '{print $2}' | cut -d/ -f1"

@@ -1,5 +1,7 @@
 - name: Apagar contenedor LXC
   hosts: proxmox1
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
   tasks:
     - name: Apagar el contenedor
       shell: "pct stop {{ ct_id }}"

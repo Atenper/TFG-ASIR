@@ -271,6 +271,36 @@ if ($mensaje_key && isset($mensajes[$mensaje_key])) {
         </form>
     </div>
 </div>
+
+<!-- Modal instalar paquete -->
+<div class="modal fade" id="installPackageModal" tabindex="-1" aria-labelledby="installPackageModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="installPackageModalLabel">Instalar Aplicación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="installPackageForm">
+                    <input type="hidden" id="machineId" name="machineId">
+                    <input type="hidden" id="machineType" name="machineType">
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Seleccione la aplicación a instalar:</label>
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-primary btn-install" data-app="wordpress">
+                                <i class="fa-brands fa-wordpress"></i> WordPress
+                            </button>
+                            <button type="button" class="btn btn-primary btn-install" data-app="nextcloud">
+                                <i class="fa-solid fa-cloud"></i> Nextcloud
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
     
     <!-- jQuery y Bootstrap Bundle (Popper incluido) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

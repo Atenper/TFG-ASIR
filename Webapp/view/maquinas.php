@@ -298,6 +298,12 @@
                                 onclick="deleteMachine(this)" ${isRunning ? 'disabled' : ''}>
                                 <i class="bi bi-trash-fill"></i> Borrar
                             </button>
+                                        <button class="btn btn-primary btn-sm me-2" 
+                data-bs-toggle="modal" 
+                data-bs-target="#installPackageModal" 
+                onclick="openInstallForm('${machine.vmid}', '${type}')">
+                <i class="bi bi-box-arrow-in-down"></i> Instalar Paquete
+            </button>
                         </div>
                     </div>
                 </div>
@@ -481,6 +487,66 @@
             })
             .catch(error => console.error('Error:', error));
         }
+
+// Función para abrir el modal con los datos de la máquina
+function openInstallForm(machineId, machineType) {
+    document.getElementById('machineId').value = machineId;
+    document.getElementById('machineType').value = machineType;
+    
+    const modal = new bootstrap.Modal(document.getElementById('installPackageModal'));
+    modal.show();
+}
+
+// Manejador para los botones de instalación
+document.querySelectorAll('.btn-install').forEach(button => {
+    button.addEventListener('click', async function() {
+        const appType = this.getAttribute('data-app');
+        const machineId = document.getElementById('machineId').value;
+        console.log(`Instalando ${appType} en máquina ID: ${machineId}`);
+        // Mostrar indicador de carga
+        this.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Instalando...`;
+        this.disabled = true;
+        
+        try {
+            const response = await fetch('../backEnd/install_package.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ct_id: machineId,
+                    app_type: appType
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+                throw new Error(result.error || 'Error en la instalación');
+            }
+            
+            // Mostrar mensaje de éxito
+            alert(`${appType === 'wordpress' ? 'WordPress' : 'NextCloud'} instalado correctamente!`);
+            
+            // Cerrar el modal
+            bootstrap.Modal.getInstance(document.getElementById('installPackageModal')).hide();
+            
+            // Recargar datos si es necesario
+            if (typeof loadData === 'function') {
+                loadData();
+            }
+            
+        } catch (error) {
+            alert(`Error al instalar ${appType}: ${error.message}`);
+        } finally {
+            // Restaurar botón
+            this.innerHTML = appType === 'wordpress' 
+                ? '<i class="fa-brands fa-wordpress"></i> WordPress' 
+                : '<i class="fa-solid fa-cloud"></i> Nextcloud';
+            this.disabled = false;
+        }
+    });
+});
     </script>
 </body>
 </html>

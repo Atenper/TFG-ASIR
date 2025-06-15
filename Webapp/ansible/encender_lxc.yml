@@ -1,5 +1,7 @@
 - name: Encender contenedor LXC
   hosts: proxmox1
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
   tasks:
     - name: Encender contenedor
       command: "pct start {{ ct_id }}"
@@ -10,3 +12,26 @@
       fail:
         msg: "Error al encender el contenedor {{ ct_id }}: {{ result.stderr }}"
       when: result.rc != 0
+
+    - name: Actualizar lista de paquetes en contenedor
+      ansible.builtin.command: "pct exec {{ ct_id }} -- apt update"
+
+    - name: Instalar openssh-server en contenedor
+      ansible.builtin.command: "pct exec {{ ct_id }} -- apt install -y openssh-server"
+
+    - name: Habilitar servicio ssh para que arranque automáticamente
+      ansible.builtin.command: "pct exec {{ ct_id }} -- systemctl enable ssh"
+
+    - name: Iniciar servicio ssh
+      ansible.builtin.command: "pct exec {{ ct_id }} -- systemctl start ssh"
+
+    - name: Permitir inicio de sesión root por SSH
+      ansible.builtin.command: >
+        pct exec {{ ct_id }} -- bash -c "sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config"
+
+    - name: Permitir autenticación por contraseña SSH
+      ansible.builtin.command: >
+        pct exec {{ ct_id }} -- bash -c "sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config"
+
+    - name: Reiniciar SSH para aplicar configuración
+      ansible.builtin.command: "pct exec {{ ct_id }} -- systemctl restart ssh"
